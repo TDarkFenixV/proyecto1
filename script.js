@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const password = document.querySelector('#password').value;
 
         try {
-            const response = await fetch('/php/login.php', {
+            const response = await fetch('php/login.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
