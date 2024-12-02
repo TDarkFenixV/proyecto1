@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal del Estudiante</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* Previous styles remain the same */
+        .navbar {
+            background: linear-gradient(135deg, #2c3e50, #0b0d0e);
+            padding: 10px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-username {
+            color: #f0f0f0;
+            font-weight: 600;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-username::before {
+            content: '👤';
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        #logoutButton {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 25px;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+        }
+
+        #logoutButton:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .menu-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .nav-button {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button.active {
+            background-color: #04295293;
+            color: white;
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        #loadingMessage,
+        #errorMessage {
+            display: none;
+        }
+
+        #sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #2c3e50;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding-top: 60px;
+        }
+
+        #sidebar.show {
+            left: 0;
+        }
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+        
+        .nav-button {
+            cursor: pointer;
+            padding: 10px 20px;
+            text-align: left;
+            color: white;
+            border: none;
+            background: none;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .nav-button.active {
+            background-color: #05284d;
+        }
+
+        .nav-button img {
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+        }
+        #userTable {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .edit-form {
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Message -->
+    <div id="loadingMessage" class="alert alert-info text-center">
+        Verificando sesión...
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" class="alert alert-danger text-center">
+        Error de sesión. Redirigiendo...
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <button id="homeNavButton" class="nav-button active" data-section="homeSection">
+            <img src="https://img.icons8.com/?size=100&id=2797&format=png&color=000000" alt="Inicio">
+            Inicio
+        </button>
+        <button id="registrarNavButton" class="nav-button" data-section="registrarSection">
+            <img src="https://img.icons8.com/?size=100&id=22033&format=png&color=000000" alt="ragistrar">
+            Registrar
+        </button>
+        <button id="modificarNavButton" class="nav-button" data-section="modificarSection">
+            <img src="https://img.icons8.com/?size=100&id=15042&format=png&color=000000" alt="modificar">
+            Modificar
+        </button>
+        <button id="asignarNavButton" class="nav-button" data-section="asignarSection">
+            <img src="https://img.icons8.com/?size=100&id=j_XkUAh9EXd2&format=png&color=000000" alt="asignar">
+            Asignar
+        </button>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div id="homeSection" class="section-content active" style="display: block;">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <!-- Menu Toggle Button (Left) -->
+                <button id="menuToggleBtn" class="menu-toggle-btn me-3">
+                    ☰
+                </button>
+
+                <!-- Rest of the content remains the same -->
+                <a class="navbar-brand mx-auto" href="#">
+                    <i class="fas fa-graduation-cap me-2"></i>Administrador de Gestión Académica
+                </a>
+
+                <button id="logoutButton" class="btn">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        
+
+        
+        <div class="container mt-4">
+            <h2 class="welcome-text">Bienvenido, <span id="userName"></span></h2>
+    
+                <!-- Información del Usuario -->
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">Información del Usuario</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table">
+                                <tr>
+                                    <th>ID:</th>
+                                    <td id="userId"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tipo de Usuario:</th>
+                                    <td id="userType"></td>
+                                </tr>
+                                <tr>
+                                    <th>Nombre Completo:</th>
+                                    <td id="fullName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Edad:</th>
+                                    <td id="userAge"></td>
+                                </tr>
+                                <tr>
+                                    <th>IC:</th>
+                                    <td id="userIc"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table">
+                                <tr>
+                                    <th>Email:</th>
+                                    <td id="userEmail"></td>
+                                </tr>
+                                <tr>
+                                    <th>Sexo:</th>
+                                    <td id="userSex"></td>
+                                </tr>
+                                <tr>
+                                    <th>Teléfono:</th>
+                                    <td id="userPhone"></td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha de Registro:</th>
+                                    <td id="userRegDate"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Sección Registrar -->
+        <div id="registrarSection" class="section-content">
+            <div class="container mt-4">
+                <h3>Formulario de Registro</h3>
+                <p>Por favor, completa el siguiente formulario para registrar un nuevo usuario.</p>
+
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="reg_tipo_usuario" class="form-label">Tipo de Usuario</label>
+                        <select class="form-select" id="reg_tipo_usuario" name="tipo_usuario" required>
+                            <option value="">Seleccione...</option>
+                            <option value="student">Estudiante</option>
+                            <option value="teacher">Profesor</option>
+                            <option value="admin">Administrador</option>
+                            <option value="director">Director</option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="reg_nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="reg_nombre" name="nombre" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="reg_apellido_paterno" class="form-label">Apellido Paterno</label>
+                            <input type="text" class="form-control" id="reg_apellido_paterno" name="apellido_paterno" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="reg_apellido_materno" class="form-label">Apellido Materno</label>
+                            <input type="text" class="form-control" id="reg_apellido_materno" name="apellido_materno" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" id="reg_fecha_nacimiento" name="fecha_nacimiento" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_ic" class="form-label">IC</label>
+                        <input type="text" class="form-control" id="reg_ic" name="ic" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="reg_email" name="email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_sexo" class="form-label">Sexo</label>
+                        <select class="form-select" id="reg_sexo" name="sexo" required>
+                            <option value="">Seleccione...</option>
+                            <option value="hombre">Hombre</option>
+                            <option value="mujer">Mujer</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_telefono" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="reg_telefono" name="telefono" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="reg_password" name="password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Registrar</button>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Sección MOdificar -->
+        <div id="modificarSection" class="section-content">
+            <div class="container mt-4">
+                <h3>Búsqueda y Modificación de Usuarios</h3>
+        
+                <!-- Formulario de búsqueda -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="searchField">Buscar por:</label>
+                                    <select class="form-select" id="searchField">
+                                        <option value="all">Todos los usuarios</option>
+                                        <option value="id">ID</option>
+                                        <option value="nombre">Nombre</option>
+                                        <option value="ic">IC</option>
+                                        <option value="email">Email</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="searchValue">Valor de búsqueda:</label>
+                                    <input type="text" class="form-control" id="searchValue" placeholder="Ingrese el valor a buscar">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button id="searchButton" class="btn btn-primary w-100" style="margin-top: 32px;">Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Tabla de resultados -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="userTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>IC</th>
+                                <th>Email</th>
+                                <th>Tipo Usuario</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Los resultados se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+        
+                <!-- Modal para editar usuario -->
+                <div class="modal fade" id="editUserModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Editar Usuario</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editUserForm">
+                                    <input type="hidden" id="edit_id">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="edit_nombre" class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" id="edit_nombre" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="edit_tipo_usuario" class="form-label">Tipo de Usuario</label>
+                                            <select class="form-select" id="edit_tipo_usuario" required>
+                                                <option value="student">Estudiante</option>
+                                                <option value="teacher">Profesor</option>
+                                                <option value="admin">Administrador</option>
+                                                <option value="director">Director</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="edit_email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="edit_email" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="edit_telefono" class="form-label">Teléfono</label>
+                                            <input type="tel" class="form-control" id="edit_telefono" required>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-primary" id="saveEditButton">Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        </div>
+
+        <!-- Sección Asignar -->
+        <div id="asignarSection" class="section-content">
+            <div class="container mt-4">
+                <h3>Asignación de Cursos a Docentes</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                Seleccionar Curso
+                            </div>
+                            <div class="card-body">
+                                <select id="materiasSelect" class="form-select mb-3">
+                                    <option value="">Seleccionar Materia</option>
+                                </select>
+                                <div id="materiaDetalle" class="mt-3">
+                                    <p><strong>Código:</strong> <span id="materiaCodigo"></span></p>
+                                    <p><strong>Créditos:</strong> <span id="materiaCreditos"></span></p>
+                                    <p><strong>Descripción:</strong> <span id="materiaDescripcion"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                Seleccionar Docente
+                            </div>
+                            <div class="card-body">
+                                <select id="docentesSelect" class="form-select mb-3">
+                                    <option value="">Seleccionar Docente</option>
+                                </select>
+                                <div id="docenteDetalle" class="mt-3">
+                                    <p><strong>Email:</strong> <span id="docenteEmail"></span></p>
+                                    <p><strong>Teléfono:</strong> <span id="docenteTelefono"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                Detalles de Asignación
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="periodoAcademico" class="form-label">Periodo Académico</label>
+                                        <input type="text" id="periodoAcademico" class="form-control" placeholder="Ej: 2024-1">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="paralelo" class="form-label">Paralelo</label>
+                                        <input type="text" id="paralelo" class="form-control" placeholder="Ej: A, B, C">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="diaSemana" class="form-label">Día de la Semana</label>
+                                        <select id="diaSemana" class="form-select">
+                                            <option value="">Seleccionar Día</option>
+                                            <option value="1">Lunes</option>
+                                            <option value="2">Martes</option>
+                                            <option value="3">Miércoles</option>
+                                            <option value="4">Jueves</option>
+                                            <option value="5">Viernes</option>
+                                            <option value="6">Sábado</option>
+                                            <option value="7">Domingo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label for="horaInicio" class="form-label">Hora Inicio</label>
+                                        <input type="time" id="horaInicio" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="horaFin" class="form-label">Hora Fin</label>
+                                        <input type="time" id="horaFin" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <label for="aula" class="form-label">Aula</label>
+                                        <input type="text" id="aula" class="form-control" placeholder="Ej: Aula 301">
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button id="asignarCursoBtn" class="btn btn-primary">Asignar Curso</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                Asignaciones Actuales
+                            </div>
+                            <div class="card-body">
+                                <table id="asignacionesTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Materia</th>
+                                            <th>Docente</th>
+                                            <th>Periodo</th>
+                                            <th>Paralelo</th>
+                                            <th>Día</th>
+                                            <th>Horario</th>
+                                            <th>Aula</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="asignacionesTableBody">
+                                        <!-- Asignaciones se cargarán dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // Toggle Sidebar visibility
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('show');
+            }
+/////////////////////////////
+            // Función para cargar usuarios
+            async function loadUsers(searchField = 'all', searchValue = '') {
+                try {
+                    const formData = new FormData();
+                    formData.append('searchField', searchField);
+                    formData.append('searchValue', searchValue);
+            
+                    console.log('Enviando búsqueda:', {
+                        searchField,
+                        searchValue
+                    });
+            
+                    const response = await fetch('php/search_users.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    console.log('Respuesta recibida:', response);
+                    
+                    const data = await response.json();
+                    console.log('Datos recibidos:', data);
+            
+                    if (data.success) {
+                        console.log('Usuarios encontrados:', data.users);
+                        displayUsers(data.users);
+                    } else {
+                        console.error('Error en la respuesta:', data.error);
+                        alert('Error al cargar usuarios: ' + data.error);
+                        if (data.details) {
+                            console.error('Detalles del error:', data.details);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error en loadUsers:', error);
+                    alert('Error al cargar los usuarios: ' + error.message);
+                }
+            }
+
+            // Función para mostrar usuarios en la tabla
+            function displayUsers(users) {
+                const tbody = document.getElementById('userTableBody');
+                tbody.innerHTML = '';
+
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.nombre} ${user.apellido_paterno} ${user.apellido_materno}</td>
+                        <td>${user.ic}</td>
+                        <td>${user.email}</td>
+                        <td>${user.tipo_usuario}</td>
+                        <td>${user.telefono}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary edit-btn" data-user-id="${user.id}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-user-id="${user.id}">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Agregar event listeners a los botones
+                addButtonListeners();
+            }
+
+            // Función para agregar event listeners a los botones de acción
+            function addButtonListeners() {
+                // Event listeners para botones de editar
+                document.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const userId = this.getAttribute('data-user-id');
+                        openEditModal(userId);
+                    });
+                });
+
+                // Event listeners para botones de eliminar
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const userId = this.getAttribute('data-user-id');
+                        deleteUser(userId);
+                    });
+                });
+            }
+
+            // Función para abrir el modal de edición
+            async function openEditModal(userId) {
+                try {
+                    const response = await fetch(`php/get_users.php?id=${userId}`);
+                    const data = await response.json();
+                    console.log('Respuesta del servidor:', data); // Para depuración
+
+                    if (data.success && data.user) {
+                        const user = data.user;
+                        // Llenar el formulario con los datos del usuario
+                        document.getElementById('edit_id').value = user.id;
+                        document.getElementById('edit_nombre').value = user.nombre;
+                        document.getElementById('edit_tipo_usuario').value = user.tipo_usuario;
+                        document.getElementById('edit_email').value = user.email;
+                        document.getElementById('edit_telefono').value = user.telefono;
+
+                        // Mostrar el modal
+                        const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                        modal.show();
+                    } else {
+                        console.error('Error en la respuesta:', data.error);
+                        alert('Error al cargar datos del usuario: ' + (data.error || 'Error desconocido'));
+                    }
+                } catch (error) {
+                    console.error('Error en la petición:', error);
+                    alert('Error al cargar datos del usuario: ' + error.message);
+                }
+            }
+
+            // Función para eliminar usuario
+            async function deleteUser(userId) {
+                if (!userId) {
+                    alert('ID de usuario no válido');
+                    return;
+                }
+            
+                if (confirm('¿Está seguro de que desea eliminar este usuario?')) {
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', userId);
+            
+                        const response = await fetch('php/delete_user.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+            
+                        const data = await response.json();
+                        console.log('Respuesta del servidor:', data); // Para depuración
+            
+                        if (data.success) {
+                            alert('Usuario eliminado correctamente');
+                            loadUsers(); // Recargar la tabla
+                        } else {
+                            console.error('Error al eliminar:', data.error);
+                            alert('Error al eliminar usuario: ' + (data.error || 'Error desconocido'));
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error al eliminar usuario: ' + error.message);
+                    }
+                }
+            }
+
+            // Event listener para el botón de búsqueda
+            document.getElementById('searchButton').addEventListener('click', function() {
+                const searchField = document.getElementById('searchField').value;
+                const searchValue = document.getElementById('searchValue').value;
+                loadUsers(searchField, searchValue);
+            });
+
+            // Event listener para guardar cambios
+            document.getElementById('saveEditButton').addEventListener('click', async function() {
+                try {
+                    const formData = new FormData();
+                    formData.append('id', document.getElementById('edit_id').value);
+                    formData.append('nombre', document.getElementById('edit_nombre').value);
+                    formData.append('tipo_usuario', document.getElementById('edit_tipo_usuario').value);
+                    formData.append('email', document.getElementById('edit_email').value);
+                    formData.append('telefono', document.getElementById('edit_telefono').value);
+
+                    const response = await fetch('php/update_user.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    console.log('Respuesta del servidor:', data); // Para depuración
+
+                    if (data.success) {
+                        alert('Usuario actualizado correctamente');
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                        modal.hide();
+                        loadUsers(); // Recargar la tabla
+                    } else {
+                        console.error('Error en la respuesta:', data.error);
+                        alert('Error al actualizar usuario: ' + (data.error || 'Error desconocido'));
+                    }
+                } catch (error) {
+                    console.error('Error en la petición:', error);
+                    alert('Error al actualizar usuario: ' + error.message);
+                }
+            });
+
+            // Cargar usuarios al iniciar
+            loadUsers();
+/////////////////////////
+            // Añadir este código al script existente
+            document.getElementById('registerForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // Recoger datos del formulario
+                const formData = new FormData(this);
+
+                try {
+                    const response = await fetch('php/registro.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('Usuario registrado correctamente');
+                        // Puedes redirigir al usuario o limpiar el formulario
+                        this.reset();
+                    } else {
+                        // Mostrar errores
+                        let errorMessage = result.errors ? result.errors.join('\n') : result.error;
+                        alert('Error al registrar: ' + errorMessage);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error al procesar el registro');
+                }
+            });
+            
+            // Agregar event listener al botón
+            document.getElementById('menuToggleBtn').addEventListener('click', toggleSidebar);
+        
+            // Función para mostrar secciones
+            function showSection(sectionId) {
+                // Ocultar todas las secciones
+                const sections = document.querySelectorAll('.section-content');
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+        
+                // Mostrar la sección activa
+                const activeSection = document.getElementById(sectionId);
+                if (activeSection) {
+                    activeSection.classList.add('active');
+                }
+        
+                // Obtener el contenedor de la información del usuario
+                const userInfoContainer = document.querySelector('.container.mt-4');
+        
+                // Si estamos en la sección "Inicio", mostrar la información del usuario
+                if (sectionId === 'homeSection') {
+                    userInfoContainer.style.display = 'block';  // Mostrar la información del usuario
+                } else {
+                    userInfoContainer.style.display = 'none';   // Ocultar la información del usuario
+                }
+        
+                // Marcar el botón activo
+                const buttons = document.querySelectorAll('.nav-button');
+                buttons.forEach(button => {
+                    button.classList.remove('active');
+                    if (button.getAttribute('data-section') === sectionId) {
+                        button.classList.add('active');
+                    }
+                });
+            }
+        
+            // Event listeners para los botones del sidebar
+            document.getElementById('homeNavButton').addEventListener('click', function () {
+                showSection('homeSection');
+                document.getElementById('sidebar').classList.remove('show');
+            });
+        
+            document.getElementById('registrarNavButton').addEventListener('click', function () {
+                showSection('registrarSection');
+                document.getElementById('sidebar').classList.remove('show');
+            });
+        
+            document.getElementById('modificarNavButton').addEventListener('click', function () {
+                showSection('modificarSection');
+                document.getElementById('sidebar').classList.remove('show');
+            });
+
+            document.getElementById('asignarNavButton').addEventListener('click', function () {
+                showSection('asignarSection');
+                document.getElementById('sidebar').classList.remove('show');
+            });
+            
+            // Resto del código de sesión y manejo de usuario permanece igual
+            async function checkSession() {
+                try {
+                    const response = await fetch('php/check_session.php');
+                    const data = await response.json();
+        
+                    if (data.success) {
+                        updateUserInfo(data.user);
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    window.location.href = 'index.html';
+                }
+            }
+        
+            function updateUserInfo(user) {
+                document.getElementById('userName').textContent = `${user.nombre} ${user.apellido_paterno}`;
+                document.getElementById('userId').textContent = user.id;
+                document.getElementById('userIc').textContent = user.ic;
+                document.getElementById('userType').textContent = user.tipo_usuario;
+                document.getElementById('fullName').textContent = `${user.nombre} ${user.apellido_paterno} ${user.apellido_materno}`;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userSex').textContent = user.sexo;
+                document.getElementById('userPhone').textContent = user.telefono;
+                document.getElementById('userRegDate').textContent = new Date(user.fecha_registro).toLocaleDateString();
+                const age = calculateAge(user.fecha_nacimiento);
+                document.getElementById('userAge').textContent = age || 'Fecha de nacimiento no válida';
+            }
+        
+            function calculateAge(dateOfBirth) {
+                const today = new Date();
+                const birthDate = new Date(dateOfBirth);
+                if (isNaN(birthDate)) return null;
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const month = today.getMonth();
+                const day = today.getDate();
+        
+                if (month < birthDate.getMonth() || (month === birthDate.getMonth() && day < birthDate.getDate())) {
+                    age--;
+                }
+        
+                return age;
+            }
+        
+            // Manejo de Cierre de Sesión
+            document.getElementById('logoutButton').addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = 'php/logout.php';
+            });
+        
+            // Initial session check and user info load
+            checkSession();
+////////////////////
+            const materiasSelect = document.getElementById('materiasSelect');
+            const docentesSelect = document.getElementById('docentesSelect');
+            const asignarCursoBtn = document.getElementById('asignarCursoBtn');
+            const asignacionesTableBody = document.getElementById('asignacionesTableBody');
+
+            // Cargar materias
+            async function cargarMaterias() {
+                try {
+                    const response = await fetch('php/get_materias_do.php');
+                    const materias = await response.json();
+                    
+                    materias.forEach(materia => {
+                        const option = document.createElement('option');
+                        option.value = materia.id;
+                        option.textContent = materia.nombre;
+                        materiasSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error cargando materias:', error);
+                }
+            }
+
+            // Cargar docentes
+            async function cargarDocentes() {
+                try {
+                    const response = await fetch('php/get_docentes.php');
+                    const docentes = await response.json();
+                    
+                    docentes.forEach(docente => {
+                        const option = document.createElement('option');
+                        option.value = docente.id;
+                        option.textContent = `${docente.nombre} ${docente.apellido_paterno}`;
+                        docentesSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error cargando docentes:', error);
+                }
+            }
+
+            // Mostrar detalles de materia
+            materiasSelect.addEventListener('change', async function() {
+                const materiaId = this.value;
+                if (!materiaId) return;
+
+                try {
+                    const response = await fetch(`php/get_materia_detalle.php?id=${materiaId}`);
+                    const materia = await response.json();
+
+                    document.getElementById('materiaCodigo').textContent = materia.codigo;
+                    document.getElementById('materiaCreditos').textContent = materia.creditos;
+                    document.getElementById('materiaDescripcion').textContent = materia.descripcion;
+                } catch (error) {
+                    console.error('Error obteniendo detalles de materia:', error);
+                }
+            });
+
+            // Mostrar detalles de docente
+            docentesSelect.addEventListener('change', async function() {
+                const docenteId = this.value;
+                if (!docenteId) return;
+
+                try {
+                    const response = await fetch(`php/get_docente_detalle.php?id=${docenteId}`);
+                    const docente = await response.json();
+
+                    document.getElementById('docenteEmail').textContent = docente.email;
+                    document.getElementById('docenteTelefono').textContent = docente.telefono;
+                } catch (error) {
+                    console.error('Error obteniendo detalles de docente:', error);
+                }
+            });
+
+            // Asignar curso
+            asignarCursoBtn.addEventListener('click', async function() {
+                const materiaId = materiasSelect.value;
+                const docenteId = docentesSelect.value;
+                const periodoAcademico = document.getElementById('periodoAcademico').value;
+                const paralelo = document.getElementById('paralelo').value;
+                const diaSemana = document.getElementById('diaSemana').value;
+                const horaInicio = document.getElementById('horaInicio').value;
+                const horaFin = document.getElementById('horaFin').value;
+                const aula = document.getElementById('aula').value;
+
+                // Validación básica
+                if (!materiaId || !docenteId || !periodoAcademico || !paralelo || !diaSemana || !horaInicio || !horaFin || !aula) {
+                    alert('Por favor, complete todos los campos');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('php/asignar_curso.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            materia_id: materiaId,
+                            docente_id: docenteId,
+                            periodo_academico: periodoAcademico,
+                            paralelo: paralelo,
+                            dia_semana: diaSemana,
+                            hora_inicio: horaInicio,
+                            hora_fin: horaFin,
+                            aula: aula
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('Curso asignado exitosamente');
+                        cargarAsignaciones(); // Recargar la tabla de asignaciones
+                    } else {
+                        alert('Error al asignar curso: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error asignando curso:', error);
+                    alert('Error al asignar curso');
+                }
+            });
+
+            // Cargar asignaciones
+            async function cargarAsignaciones() {
+                try {
+                    const response = await fetch('php/get_asignaciones.php');
+                    const asignaciones = await response.json();
+
+                    // Limpiar tabla actual
+                    asignacionesTableBody.innerHTML = '';
+
+                    // Mapeo de días de la semana
+                    const diasSemana = {
+                        1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 
+                        4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo'
+                    };
+
+                    asignaciones.forEach(asignacion => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${asignacion.materia_nombre}</td>
+                            <td>${asignacion.docente_nombre}</td>
+                            <td>${asignacion.periodo_academico}</td>
+                            <td>${asignacion.paralelo}</td>
+                            <td>${diasSemana[asignacion.dia_semana]}</td>
+                            <td>${asignacion.hora_inicio} - ${asignacion.hora_fin}</td>
+                            <td>${asignacion.aula}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarAsignacion(${asignacion.id})">Eliminar</button>
+                            </td>
+                        `;
+                        asignacionesTableBody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error cargando asignaciones:', error);
+                }
+            }
+
+            // Eliminar asignación
+            window.eliminarAsignacion = async function(asignacionId) {
+                try {
+                    const response = await fetch(`php/eliminar_asignacion.php?id=${asignacionId}`, {
+                        method: 'DELETE'
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('Asignación eliminada exitosamente');
+                        cargarAsignaciones(); // Recargar la tabla
+                    } else {
+                        alert('Error al eliminar asignación: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error eliminando asignación:', error);
+                    alert('Error al eliminar asignación');
+                }
+            }
+
+            // Inicializar
+            cargarMaterias();
+            cargarDocentes();
+            cargarAsignaciones();
+////////////////////
+        });
+    </script>
+</body>
+
+</html>

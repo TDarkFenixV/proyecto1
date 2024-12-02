@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal del Estudiante</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* Previous styles remain the same */
+        .navbar {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            padding: 10px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-username {
+            color: #f0f0f0;
+            font-weight: 600;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-username::before {
+            content: '👤';
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        #logoutButton {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 25px;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+        }
+
+        #logoutButton:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .menu-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .nav-button {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        #loadingMessage,
+        #errorMessage {
+            display: none;
+        }
+
+        #sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #2c3e50;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding-top: 60px;
+        }
+
+        #sidebar.show {
+            left: 0;
+        }
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+        
+        .nav-button {
+            cursor: pointer;
+            padding: 10px 20px;
+            text-align: left;
+            color: white;
+            border: none;
+            background: none;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .nav-button.active {
+            background-color: #007bff;
+        }
+
+        .nav-button img {
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Message -->
+    <div id="loadingMessage" class="alert alert-info text-center">
+        Verificando sesión...
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" class="alert alert-danger text-center">
+        Error de sesión. Redirigiendo...
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <button id="homeNavButton" class="nav-button active" data-section="homeSection">
+            <img src="https://img.icons8.com/?size=100&id=39132&format=png&color=000000" alt="Inicio">
+            Inicio
+        </button>
+        <button id="materiaNavButton" class="nav-button" data-section="materiaSection">
+            <img src="https://img.icons8.com/?size=100&id=9437&format=png&color=000000" alt="Materia">
+            Materia
+        </button>
+        <button id="notasNavButton" class="nav-button" data-section="notasSection">
+            <img src="https://img.icons8.com/?size=100&id=Utu32Z-yKkor&format=png&color=000000" alt="Notas">
+            Notas
+        </button>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div id="homeSection" class="section-content active" style="display: block;">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <!-- Menu Toggle Button (Left) -->
+                <button id="menuToggleBtn" class="menu-toggle-btn me-3">
+                    ☰
+                </button>
+
+                <!-- Rest of the content remains the same -->
+                <a class="navbar-brand mx-auto" href="#">
+                    <i class="fas fa-graduation-cap me-2"></i>Sistema de Gestión Académica
+                </a>
+
+                <button id="logoutButton" class="btn">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        
+
+        
+        <div class="container mt-4">
+            <h2 class="welcome-text">Bienvenido, <span id="userName"></span></h2>
+    
+                <!-- Información del Usuario -->
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Información del Usuario</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table">
+                                <tr>
+                                    <th>ID:</th>
+                                    <td id="userId"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tipo de Usuario:</th>
+                                    <td id="userType"></td>
+                                </tr>
+                                <tr>
+                                    <th>Nombre Completo:</th>
+                                    <td id="fullName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Edad:</th>
+                                    <td id="userAge"></td>
+                                </tr>
+                                <tr>
+                                    <th>IC:</th>
+                                    <td id="userIc"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table">
+                                <tr>
+                                    <th>Email:</th>
+                                    <td id="userEmail"></td>
+                                </tr>
+                                <tr>
+                                    <th>Sexo:</th>
+                                    <td id="userSex"></td>
+                                </tr>
+                                <tr>
+                                    <th>Teléfono:</th>
+                                    <td id="userPhone"></td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha de Registro:</th>
+                                    <td id="userRegDate"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Materia -->
+        <div id="materiaSection" class="section-content">
+            <div class="container mt-4">
+                <h3>Aquí podrás ver las materias.</h3>
+                <p>Contenido para las materias...</p>
+                <!-- Tabla para mostrar las materias -->
+                <table class="table table-bordered table-hover" id="materiasTable">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>ID</th>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Créditos</th>
+                            <th>Nivel</th>
+                            <th>Paralelo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas de las materias se cargarán aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sección Notas -->
+        <div id="notasSection" class="section-content">
+            <div class="container mt-4">
+                <h3>Aquí podrás ver tus notas.</h3>
+                <p>Contenido para las notas...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle Sidebar visibility
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('show');
+            }
+        
+            // Agregar event listener al botón
+            document.getElementById('menuToggleBtn').addEventListener('click', toggleSidebar);
+        
+            // Función para mostrar secciones
+            function showSection(sectionId) {
+                // Ocultar todas las secciones
+                const sections = document.querySelectorAll('.section-content');
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+        
+                // Mostrar la sección activa
+                const activeSection = document.getElementById(sectionId);
+                if (activeSection) {
+                    activeSection.classList.add('active');
+                }
+        
+                // Obtener el contenedor de información de usuario
+                const userInfoContainer = document.querySelector('.container.mt-4');
+        
+                // Manejar visibilidad de la información del usuario
+                if (sectionId === 'homeSection') {
+                    // En la sección de inicio, mostrar solo la información del usuario
+                    userInfoContainer.style.display = 'block';
+                } else {
+                    // En otras secciones, ocultar el contenedor de información del usuario
+                    userInfoContainer.style.display = 'none';
+                }
+        
+                // Marcar el botón activo
+                const buttons = document.querySelectorAll('.nav-button');
+                buttons.forEach(button => {
+                    button.classList.remove('active');
+                    if (button.getAttribute('data-section') === sectionId) {
+                        button.classList.add('active');
+                    }
+                });
+            }
+        
+            // Event listeners para los botones del sidebar
+            document.getElementById('homeNavButton').addEventListener('click', function () {
+                showSection('homeSection');
+                document.getElementById('sidebar').classList.remove('show');
+            });
+        
+            document.getElementById('materiaNavButton').addEventListener('click', function () {
+                showSection('materiaSection');
+                cargarMaterias(); // Cargar las materias cuando se muestra la sección
+                document.getElementById('sidebar').classList.remove('show');
+            });
+        
+            document.getElementById('notasNavButton').addEventListener('click', function () {
+                showSection('notasSection');
+                document.getElementById('sidebar').classList.remove('show');
+            });
+            
+            // Resto del código de sesión y manejo de usuario permanece igual
+            async function checkSession() {
+                try {
+                    const response = await fetch('php/check_session.php');
+                    const data = await response.json();
+        
+                    if (data.success) {
+                        updateUserInfo(data.user);
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    window.location.href = 'index.html';
+                }
+            }
+        
+            function updateUserInfo(user) {
+                document.getElementById('userName').textContent = `${user.nombre} ${user.apellido_paterno}`;
+                document.getElementById('userId').textContent = user.id;
+                document.getElementById('userIc').textContent = user.ic;
+                document.getElementById('userType').textContent = user.tipo_usuario;
+                document.getElementById('fullName').textContent = `${user.nombre} ${user.apellido_paterno} ${user.apellido_materno}`;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userSex').textContent = user.sexo;
+                document.getElementById('userPhone').textContent = user.telefono;
+                document.getElementById('userRegDate').textContent = new Date(user.fecha_registro).toLocaleDateString();
+                const age = calculateAge(user.fecha_nacimiento);
+                document.getElementById('userAge').textContent = age || 'Fecha de nacimiento no válida';
+            }
+        
+            function calculateAge(dateOfBirth) {
+                const today = new Date();
+                const birthDate = new Date(dateOfBirth);
+                if (isNaN(birthDate)) return null;
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const month = today.getMonth();
+                const day = today.getDate();
+        
+                if (month < birthDate.getMonth() || (month === birthDate.getMonth() && day < birthDate.getDate())) {
+                    age--;
+                }
+        
+                return age;
+            }
+        
+            // Manejo de Cierre de Sesión
+            document.getElementById('logoutButton').addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = 'php/logout.php';
+            });
+        
+            // Initial session check and user info load
+            checkSession();
+
+            // Función para cargar las materias del estudiantes
+            function cargarMaterias() {
+                const materiasTable = document.getElementById('materiasTable').getElementsByTagName('tbody')[0];
+                materiasTable.innerHTML = '<tr><td colspan="8" class="text-center">Cargando materias...</td></tr>';
+            
+                // Remover el mensaje de nivel existente si hay alguno
+                const existingInfoDiv = document.querySelector('.alert.alert-info.mt-3');
+                if (existingInfoDiv) {
+                    existingInfoDiv.remove();
+                }
+            
+                fetch('php/get_materias.php')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(response => {
+                        materiasTable.innerHTML = ''; // Limpiar la tabla
+            
+                        if (response.success && response.data && response.data.length > 0) {
+                            // Agregar información del nivel
+                            if (!document.querySelector('.alert.alert-info.mt-3')) {
+                                const infoDiv = document.createElement('div');
+                                infoDiv.className = 'alert alert-info mt-3';
+                                infoDiv.innerHTML = `Nivel actual: ${response.nivel} (Edad: ${response.edad} años)`;
+                                materiasTable.parentNode.parentNode.insertBefore(infoDiv, materiasTable.parentNode);
+                            }
+            
+                            response.data.forEach(materia => {
+                                const row = document.createElement('tr');
+                                // Definir el color del badge según el estado
+                                const estadoBadgeClass = materia.estado === 'activo' ? 'bg-success' : 
+                                                       materia.estado === 'inactivo' ? 'bg-danger' : 'bg-warning';
+                                
+                                row.innerHTML = `
+                                    <td>${materia.id}</td>
+                                    <td>${materia.codigo}</td>
+                                    <td>${materia.nombre}</td>
+                                    <td>${materia.descripcion || ''}</td>
+                                    <td>${materia.creditos}</td>
+                                    <td>${materia.nivel}</td>
+                                    <td><span class="badge bg-primary">Paralelo ${materia.paralelo || 'No asignado'}</span></td>
+                                    <td><span class="badge ${estadoBadgeClass}">${materia.estado}</span></td>
+                                `;
+                                materiasTable.appendChild(row);
+                            });
+                        } else if (response.error) {
+                            throw new Error(response.error);
+                        } else {
+                            materiasTable.innerHTML = `
+                                <tr>
+                                    <td colspan="8" class="text-center">
+                                        No hay materias disponibles para tu nivel actual.
+                                    </td>
+                                </tr>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar las materias:', error);
+                        materiasTable.innerHTML = `
+                            <tr>
+                                <td colspan="8" class="text-center text-danger">
+                                    Error al cargar las materias: ${error.message}
+                                </td>
+                            </tr>`;
+                    });
+            }
+        
+            // Initial session check and user info load
+            checkSession();
+            
+
+        });
+    </script>
+</body>
+
+</html>
